@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="canonical" href="https://zyjzhy.github.io/lwdh/">
+    <meta name="keywords" content="猪猪导航">
+    <meta name="description" content="猪猪导航">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>猪猪导航</title>
+    <link rel="icon" type="image/x-icon" href="./z.ico" sizes="32x32">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            color: #333; /* 调整颜色对比度 */
+            margin: 0;
+            padding-left: 80px;
+            padding-top: 60px; /* 新增：为导航栏留出空间 */
+            display: flex;
+            justify-content: center;
+            min-height: 90vh;
+            background-color: transparent;
+            background-image: url('C:/Users/zyj/Pictures/2025.png');  /*设置背景图片*/
+            background-size:cover;  /*背景图片覆盖整个页面*/
+            background-repeat: no-repeat;  /*防止背景图片重复*/
+            background-attachment: fixed; /* 固定背景 */
+            background-position: center center; /* 背景图片居中 */
+            transition: padding-left 0.3s ease-in-out;
+            position: relative;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.1); /* 黑色半透明叠加层 */
+            z-index: -1; /* 确保叠加层不挡住内容 */
+        }
+
+        body.shifted {
+            padding-left: 0;
+        }
+
+        /* 滚动文本 */
+        #scrolling-text {
+            position: fixed;
+            top: 0;
+            left: 50%; /* 左边以页面宽度的一半为基准 */
+            transform: translateX(-50%); /* 水平居中 */
+            width: 40%;
+            height: 20px;
+            margin: 0 auto;
+            background-color:rgba(255, 255, 255, 0);
+            color: rgb(0, 0, 0);
+            display: flex;
+            align-items: center;
+            overflow: hidden; /* 隐藏滚动区域外的文本 */
+            z-index: 999; /* 确保在页面顶部 */
+            font-size: 10px;
+        }
+
+        #scrolling-text span {
+            white-space: nowrap; /* 文本不换行 */
+            display: inline-block;
+            animation: scroll-left 10s linear infinite; /* 左滚动动画 */
+        }
+
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* 侧边栏 */
+        #sidebar {
+            width: 60px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+            border-radius: 0 16px 16px 0;
+            padding: 20px;
+            position: fixed;
+            height: 80%;
+            overflow-y: auto;
+            /* transition: transform 0.3s ease-in-out; */
+            z-index: 100;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #sidebar.hidden {
+            transform: translateX(-90%);
+            transition: transform 0.4s ease-in-out; /* 平滑过渡 */
+        }
+
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
+
+        #sidebar li a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            text-decoration: none;
+            color: #333;
+            border-radius: 16px;
+            background-color: rgba(255, 255, 255, 0);
+            transition: background-color 0.2s ease-in-out;
+            border: none; /* 去除边框 */
+        }
+
+        #sidebar li a:hover {
+            background-color: #f6bdbd;
+        }
+
+        #sidebar li a.active,.nav-link.active {
+            background-color: #f6bdbd;
+            color: rgb(0, 0, 0);
+        }
+
+        #sidebar ul li {
+            width: 100%;
+            text-align: center;
+            position: relative; /*  为了相对定位下划线 */
+        }
+
+        #sidebar ul li a {
+            /* display: inline-block; 使 a 元素成为块级元素以便设置下划线 */
+            padding: 6px;
+            text-decoration: none;
+            color: #333;
+            border-radius: 16px;
+            transition: background-color 0.2s ease-in-out;
+            border: none; 
+        }
+
+        #sidebar ul li a::after {
+            content: "";
+            display: block;
+            width: 80%;
+            height: 1px;
+            background-color: #ccc;
+            margin: 0 auto; /* 居中下划线 */
+            position: absolute; /*  绝对定位下划线 */
+            bottom: -5px; /*  调整下划线位置 */
+            left: 10%; /*  调整下划线位置 */
+        }
+
+        #content {
+            padding: 20px;
+            transition: margin-left 0.3s ease-in-out;
+            margin-left: 10px;
+            margin-right: 10px;
+            width: 90%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 内容区域居中 */
+            box-sizing: border-box;
+            background-color: rgba(255, 255, 255, 0);
+            border-radius: 10px;
+            /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+            /* backdrop-filter: blur(10px); 玻璃效果 */
+            /* overflow-y: auto;  内容区域允许滚动
+            max-height: calc(100vh - 120px); /*  设置最大高度，防止内容溢出 */
+        } 
+
+        #content.shifted {
+            margin-left: 0;
+        }
+
+        /* 窗口样式 */  
+        .countdown {  
+            /* background-color: rgb(242, 244, 248);   */
+            padding: 5px;  
+            font-size: 0.6rem;  
+            color: #000000;
+        }  
+    
+        #kaoyan {
+            font-size: 0.6rem;  
+            color: red;
+            padding: 2px 2px;
+            /* background-color: #70baf7; */
+        }
+        #kaogong {
+            font-size: 0.6rem;  
+            color: red;
+            padding: 2px 2px;
+            /* background-color: #70f7ee; */
+        }
+
+        .search-main {
+            display: flex; 
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-evenly;;
+            width: 100% !important;
+            margin-bottom: 20px;
+        }
+
+        /* 倒计时样式 */
+        .countdown-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #333;
+            padding: 10px;
+            border-radius: 20px;
+
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .countdown-container .countdown-days {
+            font-size: 0.6rem;;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        /* 搜索框整体 */
+        .search-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 70%; /* 搜索框宽度 */
+        }
+
+        /* 搜索框 Tab 样式 */
+        #search-tabs {
+            display: flex;
+            gap: 5px;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+        }
+
+        #search-tabs button {
+            font-size: 12px;
+            padding: 5px 8px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.499);
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #search-tabs button.active {
+            background-color: rgb(255, 255, 255);
+            color: rgb(0, 0, 0);
+        }
+
+        #search-tabs button:hover {
+            transform: scale(1.1);
+        }
+
+        /* 搜索框样式 */
+        #search-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 16px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        #search-button {
+            position: absolute;
+            right: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #4CAF50;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .search-main {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .countdown-container {
+                width: 100%;
+            }
+
+            .search-area {
+                width: 100%;
+            }
+
+            #search-bar {
+                width: 90%;
+            }
+
+            #search-tabs {
+                order: -1; /* 搜索标签移到第一行 */
+                margin-top: 10px;
+            }
+        }
+
+        .column {
+            
+            display: none;
+            padding: 10px;
+            border: none; /* 去除边框 */
+            /* margin-bottom: 50px; */
+            /* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); */
+            width: 90%;
+            margin: 30px auto;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .column.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .sub-column {
+            margin-bottom: 10px;
+            text-align: center; /* 卡片内容居中 */
+        }
+
+        .sub-column h3 {
+            margin:10px 5px;
+            font-size: 16px;
+            text-align: center; 
+            color: #333;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            /* grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); */
+            gap: 10px;
+            margin: 8px 0;
+            justify-content: space-between;
+        }
+
+        .card {
+            position: relative; /* 确保提示框基于卡片定位 */
+            text-overflow: ellipsis; /* 文字省略 */
+            white-space: nowrap;  /* 不换行 */
+            overflow: visible; /* 显示溢出的提示框 */
+            padding: 5px 8px;
+            height: 20px;
+            color: #000000;
+            background-color: rgba(255, 255, 255, 0.9);
+            font-size: 0.65rem;
+            width: calc(20% - 1rem); /* 调整宽度 */
+            /* margin-bottom: 1rem; */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            background-color: #e0e0e0;
+            transform: scale(1.05); /* 鼠标触碰时放大 */
+        }
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .card {
+                width: calc(22% - 1rem); /* 在较小屏幕上使用两列布局 */
+            }
+        } 
+
+        @media (min-width: 601px) and (max-width: 800px) {
+            .card {
+                width: calc(14.2% - 1rem); /* 在中等屏幕上使用三列布局 */
+            }
+        }
+
+        @media (min-width: 801px) and (max-width: 1000px) {
+            .card {
+                width: calc(16.6% - 1rem); /* 在较大屏幕上使用四列布局 */
+            }
+        }
+
+        @media (min-width: 1001px) and (max-width: 1200px) {
+            .card {
+                width: calc(14.2% - 1rem); /* 在更大屏幕上使用五列布局 */
+            }
+        }
+
+        @media (min-width: 1201px) {
+            .card {
+                width: calc(12.5% - 1rem); /* 在超大屏幕上使用六列布局 */
+            }
+        }
+
+        .card::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 120%; /* 提示框位置 */
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1px 1px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            pointer-events: none; /* 避免鼠标捕获 */
+            width: 90px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 提示框阴影 */
+            white-space: normal; /* 允许换行 */
+            display: -webkit-box; /* 必须结合 line-clamp 属性 */
+            -webkit-line-clamp: 2; /* 限制显示两行 */
+            -webkit-box-orient: vertical; /* 垂直布局 */
+            overflow: hidden; /* 超出隐藏 */
+            word-wrap: break-word; /* 防止长单词溢出 */
+            text-align: center; /* 文本左对齐 */
+            z-index: 10;
+        }
+
+        .card:hover::after {
+            opacity: 1; /* 鼠标悬停时显示提示内容 */
+        }
+
+        #toggle-sidebar {
+            position: absolute;
+            top: 50%;
+            right: 0px;
+            transform: translateY(-50%);
+            background-color: transparent;
+            border: 1px solid #ccc;
+            border-radius: 16px;
+            color: #333;
+            /* font-size: 24px; */
+            cursor: pointer;
+            z-index: 101;
+            transition: transform 0.3s ease-in-out;
+            padding: 5px;
+        }
+
+        #toggle-sidebar i {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #sidebar.hidden + #toggle-sidebar {
+            transform: translateX(20px) translateY(-50%);
+        }
+
+        #sidebar.hidden + #toggle-sidebar i {
+            transform: rotate(180deg);
+        }
+
+        #contact-author-modal, #announcement {
+            display: none;
+            position: fixed;
+            z-index: 1002;
+            left: 50%;
+            top: 50%;
+            width: 35vw;
+            height: 40vh;
+            max-height: 35vh; /* 最大高度，防止内容溢出 */
+            overflow: hidden; /* 隐藏多余内容 */
+            z-index: 1002;
+            transform: translate(-50%, -50%);
+            background-color: rgba(225, 225, 225, 1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        #announcement p, #contact-author-modal p {
+            margin: 10px 0;
+        }
+
+        #announcement .title { /* 公告标题样式 */
+            display: flex;
+            justify-content: space-around;
+            font-size: 20px;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        #contact-author-modal .title{ /* 公告标题样式 */
+            display: flex;
+            justify-content: space-around;
+            font-size: 20px;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        #announcement .content { /* 公告内容样式 */
+            margin-bottom: 10px;
+            max-height: calc(40vh - 100px); /* 限制内容区高度 */
+            overflow-y: auto; /* 添加滚动条 */
+        }
+        #contact-author-modal .modal-content { /* 联系作者公告内容样式 */
+            margin-bottom: 10px;
+            max-height: calc(40vh - 100px); /* 限制内容区高度 */
+            overflow-y: auto; /* 添加滚动条 */
+        }
+
+        #announcement img, #contact-author-modal img {
+            display: block;
+            margin: 10px auto; /* 图片左右居中 */
+            max-width: 30vw;
+            max-height: 30vh;
+            border-radius: 5px;
+        }
+
+        #announcement button {
+            margin: 10px auto; /* 按钮左右居中 */
+            padding: 8px 10px;
+            background-color: #4CAF50;
+            width:15vw;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+        }
+
+        #announcement button:hover {
+            background-color: #45a049; /* 鼠标悬停时颜色变化 */
+        }
+
+        #contact-author-modal button {
+            margin: 10px auto; /* 按钮左右居中 */
+            padding: 8px 10px;
+            background-color: #4CAF50;
+            width:15vw;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+        }
+
+        #contact-author-modal button:hover{
+            background-color: #45a049; /* 鼠标悬停时颜色变化 */
+        }
+
+        /* 悬浮按钮样式 */
+        .floating-button {
+            position: fixed;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: rgb(0, 0, 0);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            opacity: 0.7; /*  初始透明度 */
+            /* bottom: calc(20px + (100% - var(--sidebar-height, 80%))/2); 垂直居中 */
+            transition: opacity 0.3s ease-in-out; /*  添加过渡效果 */
+        }
+
+        .floating-button:hover {
+            opacity: 1; /*  鼠标悬停时不透明 */
+            background-color: rgba(157, 245, 106, 0.9);
+        }
+        #open-contact-modal {
+            bottom: 80px;
+            right: 5px;
+            
+        }
+
+        #scroll-to-top {
+            bottom: 40px;
+            right: 5px;
+        }
+
+        body.shifted .floating-button { /*  侧边栏隐藏时调整按钮位置 */
+            right: calc(20px + 80px); /*  加上侧边栏宽度 */
+        }
+        /*  显示一键置顶按钮的逻辑 */
+        body.show-scroll-top .floating-button[onclick="scrollToTop()"] {
+            display: none; /*  初始隐藏 */
+        }
+
+        .close {
+          color: #aaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+          color: black;
+          text-decoration: none;
+          cursor: pointer;
+        }
+
+        /* 媒体查询 */
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            body {
+                padding: 60px 20px 0 20px;
+            }
+            #sidebar {
+                display: none; /* 小屏幕隐藏侧边栏 */
+            }
+
+            #content {
+                width: 100%; /* 内容区域全屏显示 */
+            }
+            #toggle-sidebar {
+                transform: translateX(20px) translateY(-50%);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0;
+                padding-top: 60px; /* 新增：为导航栏留出空间 */
+            }
+
+            #sidebar {
+                transform: translateX(-100px);
+            }
+
+            #content {
+                margin-left: 0;
+            }
+
+            #sidebar.hidden {
+                transform: translateX(-100px);
+            }
+
+            #sidebar.hidden + #toggle-sidebar {
+                transform: translateX(20px) translateY(-50%);
+            }
+
+            header.nav-main {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                background-color: rgba(255, 255, 255, 0.3);
+                z-index: 1000;
+                padding: 10px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                
+            }
+
+            header.nav-main nav {
+                display: flex;
+                justify-content: space-evenly;
+                width: 100%;
+            }
+
+            header.nav-main nav a {
+                padding: 5px;
+                font-size: 12px;
+                text-decoration: none;
+                color: #333;
+                /* border: 1px solid #ccc; */
+                border-radius: 16px;
+                background-color: rgba(255, 255, 255, 0.6);
+                transition: background-color 0.2s ease-in-out;
+            }
+
+            header.nav-main nav a:hover {
+                background-color: #ccc;
+            }
+
+            .search-main {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            #search-tabs {
+                justify-content: center;
+            }
+            
+            .countdown-container {
+                display: none; /* 小屏幕隐藏倒计时框 */
+            }
+
+            .search-area {
+                width: 100%;
+            }
+        }
+
+        @media (min-width: 769px) {
+            header.nav-main {
+                display: none; /* 大于 768px 时隐藏导航栏 */
+            }
+        }
+    </style>
+</head>
+<body onload="scrollToTop()">
+    <header class="nav-main">
+        <nav id="daohang">
+            <a href="#" data-target="personal" class="nav-link">个人栏</a>
+            <a href="#" data-target="resources" class="nav-link">资源栏</a>
+            <a href="#" data-target="useful-links" class="nav-link">有用网</a>
+            <a href="#" data-target="papers" class="nav-link">论文栏</a>
+            <a href="#" data-target="entertainment-section" class="nav-link">娱乐栏</a>
+            <a href="#" data-target="tools-section" class="nav-link">工具栏</a>
+        </nav>
+    </header>
+
+    <div id="scrolling-text" >
+        <span>欢迎来到猪猪导航！这是一个简洁、美观的导航网站，帮助您快速访问常用资源！</span>
+    </div>
+
+    <div id="sidebar">
+        <ul>
+            <li><a href="#" data-target="personal">个人栏</a></li>
+            <li><a href="#" data-target="resources">资源栏</a></li>
+            <li><a href="#" data-target="useful-links">有用网</a></li> 
+            <li><a href="#" data-target="papers">论文栏</a></li> 
+            <li><a href="#" data-target="entertainment-section">娱乐栏</a></li> 
+            <li><a href="#" data-target="tools-section">工具栏</a></li> 
+        </ul>
+        <button id="toggle-sidebar"><i class="fas fa-angle-left"></i></button>
+    </div>
+
+    <!-- 公告弹窗 -->
+    <div id="announcement">
+        <div class="title">🎉 最新公告 🎉</div>
+        <div class="content">
+            <p>欢迎来到猪猪导航！这是一个简洁、美观的导航网站，旨在帮助您快速访问常用的网站和资源。</p>
+            <img src="C:/Users/zyj/Pictures/2025.png" alt="公告图片">
+            <p>我们定期更新网站内容，敬请关注！</p>
+        </div>
+        <button onclick="closeAnnouncement()">关闭</button>
+    </div>
+    <!-- 悬浮按钮 -->
+    <div>
+        <button id="open-contact-modal" class="floating-button" onclick="openContactModal()">
+            <i class="fas fa-envelope"></i>
+        </button>
+        <button id="scroll-to-top" class="floating-button" onclick="scrollToTop()">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+    </div>
+    
+
+    <!-- 联系作者弹窗 -->
+    <div id="contact-author-modal" class="modal">
+        <div class="title">
+            ✉ 联系作者 ✉
+        </div>
+        <div class="modal-content">
+            <p>邮箱: 2577539099@qq.com</p>
+            <p>"公主"号为：</p>
+            <img src="C:/Users/zyj/Pictures/2025.png" alt="公众号二维码">
+        </div>
+        <button onclick="close_contact_author()">关闭</button>
+    </div >
+
+    <div id="content">
+        <div class="search-main">
+            <!-- 左侧倒计时 -->
+            <div class="countdown-container">
+                <div class="countdown-days">考研倒计时</div>
+                <div class="countdown"><span id="kaoyan"></span> 天</div>
+            </div>
+        
+            <!-- 搜索区域 -->
+            <div class="search-area">
+                <!-- 搜索框标签 -->
+                <div id="search-tabs">
+                    <button data-engine="https://nami.so.360.com/search?q=" data-placeholder="360纳米AI搜索" class="active">纳米</button>
+                    <button data-engine="https://www.quark.cn/s?q=" data-placeholder="夸克AI搜索">夸克</button>
+                    <button data-engine="https://cn.bing.com/search?q=" data-placeholder="必应搜索">必应</button>
+                    <button data-engine="https://www.baidu.com/s?wd=" data-placeholder="百度一下,你就知道">百度</button>
+                    <button data-engine="https://kaifa.baidu.com/searchPage?wd=" data-placeholder="专注于程序员编程的搜索">编程</button>
+                    <button data-engine="https://www.google.com/search?q=" data-placeholder="Google搜索">谷歌</button>
+                    <button data-engine="https://weixin.sogou.com/weixin?query=" data-placeholder="微信文章搜索">微信</button>
+                    <button data-engine="https://www.zhihu.com/search?q=" data-placeholder="知乎文章搜索">知乎</button>
+                </div>
+        
+                <!-- 搜索框 -->
+                <div id="search-bar">
+                    <input type="text" id="search-input" placeholder="360纳米AI搜索">
+                    <button id="search-button"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        
+            <!-- 右侧倒计时 -->
+            <div class="countdown-container">
+                <div class="countdown-days">考公倒计时</div>
+                <div class="countdown"><span id="kaogong"></span> 天</div>
+            </div>
+        </div>
+        
+
+        <div id="personal" class="column active">
+            <!-- 个人栏：个人网店 -->
+            <div class="sub-column">
+                <h3>个人网店</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="各类会员，网课，租号，实物等应有尽有，价格实惠！！" onclick="window.open('https://zzfl.98qyz.top/', '_blank')">猪猪甄选</div>
+                    <div class="card" data-tooltip="刷步数，网易云，哔哩哔哩，爱奇艺，Epic" onclick="window.open('https://zzdg.dgh1.top/', '_blank')">猪猪呆瓜</div>
+                </div>
+            </div>
+
+            <!-- 个人栏：个人博客 -->
+            <div class="sub-column">
+                <h3>个人博客</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="以前的学习笔记！" onclick="window.open('https://blog.csdn.net/qq_25990967', '_blank')">学习笔记</div>
+                </div>
+            </div>
+
+            <!-- 个人栏：个人网站 -->
+            <div class="sub-column">
+                <h3>个人网站</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="更多内容正在开发中">更新ing...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="resources" class="column">
+            <!-- 综合资源 -->
+            <div class="sub-column">
+                <h3>综合资源</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="全能型资源集合" onclick="window.open('http://daxuesheng123.ysepan.com/', '_blank')">白嫖の地</div>
+                    <div class="card" data-tooltip="狐小狗科技馆" onclick="window.open('http://huxiaogou.ysepan.com/', '_blank')">狐小狗科技馆</div>
+                    <div class="card" data-tooltip="小仓鼠的资源库" onclick="window.open('http://redamancy.ysepan.com/', '_blank')">小仓鼠的资源库</div>
+                    <div class="card" data-tooltip="软件柯基资源分享" onclick="window.open('http://wjsaustin.ysepan.com/', '_blank')">软件柯基资源分享</div>
+                    <div class="card" data-tooltip="陈蛋蛋的宝藏库" onclick="window.open('http://chendandan.ysepan.com/', '_blank')">陈蛋蛋的宝藏库</div>
+                    <div class="card" data-tooltip="学习资源、考证考级资源等" onclick="window.open('https://tuostudy.com/', '_blank')">图欧学习资源库</div>
+                    <div class="card" data-tooltip="资源汇社区的资源库密码：zyhsq55" onclick="window.open('http://ziyuanhuishequ.ysepan.com/', '_blank')">资源汇社区的资源库</div>
+                    <div class="card" data-tooltip="知识船仓·公益知识库·致终身学习者" onclick="window.open('http://zscc.ysepan.com/', '_blank')">知识船仓</div>
+                    <div class="card" data-tooltip="万人迷社区" onclick="window.open('http://wrm8.ysepan.com/', '_blank')">万人迷社区</div>
+                    <div class="card" data-tooltip="阿虚同学的储物间" onclick="window.open('https://axutongxue.com/', '_blank')">阿虚同学的储物间</div>
+                </div>
+            </div>
+
+            <!-- 网盘资源 -->
+            <div class="sub-column">
+                <h3>网盘资源</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="阿里云盘资源共享站" onclick="window.open('https://pan666.net/', '_blank')">阿里小站</div>
+                    <div class="card" data-tooltip="阿里云盘资源共享站" onclick="window.open('https://newxiaozhan.com/', '_blank')">阿里小站(备用)</div>
+                    <div class="card" data-tooltip="好用的阿里云盘搜索，更新快、失效少" onclick="window.open('https://ssgo.app/', '_blank')">阿里云盘搜索</div>
+                    <div class="card" data-tooltip="好用的阿里云盘搜索，更新快、失效少" onclick="window.open('https://upyunso.com/#pan666.cn', '_blank')">UP云搜</div>
+                    <div class="card" data-tooltip="网盘资源搜索" onclick="window.open('https://www.xuesousou.com/', '_blank')">学搜搜</div>
+                    <div class="card" data-tooltip="网盘资源搜索" onclick="window.open('http://feiyu100.cn/', '_blank')">飞鱼盘搜</div>
+                    <div class="card" data-tooltip="网盘资源搜索" onclick="window.open('https://www.pansoso.com/', '_blank')">盘搜搜</div>
+                    <div class="card" data-tooltip="网盘资源搜索" onclick="window.open('https://www.xiaozhukuaipan.com/', '_blank')">小猪快盘</div>
+                    <div class="card" data-tooltip="网盘资源搜索" onclick="window.open('https://www.xiaomapan.com/', '_blank')">小马盘</div>
+                    <div class="card" data-tooltip="阿里云盘、百度网盘、夸克网盘、迅雷云盘四大网盘免费搜索！" onclick="window.open('https://yiso.fun/', '_blank')">易搜</div>
+                    <div class="card" data-tooltip="坚持用心做最简单的综合云盘资源搜索引擎，并且永久免费使用无广告" onclick="window.open('https://www.cuppaso.fun/', '_blank')">咔帕搜索</div>
+                    <div class="card" data-tooltip="阿里云蓝奏云搜" onclick="window.open('https://yougit.net/', '_blank')">YOUGIT</div>
+                    <div class="card" data-tooltip="聚合搜索多个网盘资源" onclick="window.open('https://jujuso.com/', '_blank')">优聚搜</div>
+                </div>
+            </div>
+
+            <!-- 数据资源 -->
+            <div class="sub-column">
+                <h3>数据资源</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="关乎国计民生与经济发展的各类数据；经济、人口普查报告；统计年鉴" onclick="window.open('http://www.stats.gov.cn/tjsj/', '_blank')">国家统计网</div>
+                    <div class="card" data-tooltip="工伤保险、失业保险、养老保险、城镇就业率等" onclick="window.open('http://www.mohrss.gov.cn/SYrlzyhshbzb/zwgk/szrs/', '_blank')">人力资源和社会保障网</div>
+                    <div class="card" data-tooltip="医疗保险、失业保险、医疗保障事业等" onclick="window.open('http://www.nhsa.gov.cn/col/col7/index.html', '_blank')">国家医疗保障网</div>
+                    <div class="card" data-tooltip="财政收入、支出" onclick="window.open('http://www.mof.gov.cn/gkml/caizhengshuju/', '_blank')">财政网</div>
+                    <div class="card" data-tooltip="税收收入" onclick="window.open('http://www.chinatax.gov.cn/n810214/n810631/index.html', '_blank')">国家税务总网</div>
+                    <div class="card" data-tooltip="海洋 测绘 地质 矿产 土地" onclick="window.open('http://www.mnr.gov.cn/sj/', '_blank')">自然资源网</div>
+                    <div class="card" data-tooltip="海洋生态环境、噪声污染、水质量、大气质量" onclick="window.open('http://www.mee.gov.cn/hjzl/', '_blank')">生态环境网</div>
+                    <div class="card" data-tooltip="水系流域、水土流失、水库信息等" onclick="window.open('http://www.mwr.gov.cn/sj/', '_blank')">水利网</div>
+                    <div class="card" data-tooltip="气象预警 降水量" onclick="window.open('http://data.cma.cn/', '_blank')">中国气象网</div>
+                    <div class="card" data-tooltip="用电量、能源状况" onclick="window.open('http://www.nea.gov.cn/news/jwzdt.htm', '_blank')">国家能源网</div>
+                    <div class="card" data-tooltip="投资、贸易、消费、价格等" onclick="window.open('http://data.mofcom.gov.cn/index.shtml', '_blank')">商务网</div>
+                    <div class="card" data-tooltip="进出口贸易" onclick="window.open('http://www.customs.gov.cn/customs/302249/302274/302277/index.html', '_blank')">海关总署</div>
+                    <div class="card" data-tooltip="机动车数量、案件信息数据" onclick="window.open('https://www.mps.gov.cn/n2254314/n6409334/index.html', '_blank')">公安网</div>
+                    <div class="card" data-tooltip="客运、货运信息" onclick="window.open('https://www.mot.gov.cn/shuju/', '_blank')">交通运输网</div>
+                    <div class="card" data-tooltip="运输数据，发展报告等" onclick="window.open('http://www.caac.gov.cn/XXGK/XXGK/index_172.html?fl=11', '_blank')">中国民用航空网</div>
+                    <div class="card" data-tooltip="各行业数据信息（原材料、装备、消费品、通信、电子信息、软件等）" onclick="window.open('https://www.miit.gov.cn/gxsj/index.html', '_blank')">工信网</div>
+                    <div class="card" data-tooltip="邮政业务相关数据" onclick="window.open('http://www.spb.gov.cn/sj/tjjd/', '_blank')">邮政网</div>
+                    <div class="card" data-tooltip="存贷款数据" onclick="window.open('http://www.pbc.gov.cn/diaochatongjisi/116219/index.html', '_blank')">中国人民银行</div>
+                    <div class="card" data-tooltip="外汇数据" onclick="window.open('http://www.safe.gov.cn/safe/tjsj1/index.html', '_blank')">国家外汇管理网</div>
+                    <div class="card" data-tooltip="科研经费支出状况" onclick="window.open('http://www.most.gov.cn/index.html', '_blank')">科学技术网</div>
+                    <div class="card" data-tooltip="专利侵权数据、专利调查报告等" onclick="window.open('https://www.cnipa.gov.cn/col/col61/index.html', '_blank')">国家知识产权网</div>
+                    <div class="card" data-tooltip="教职工信息、入学率、学历信息等" onclick="window.open('http://www.moe.gov.cn/jyb_sjzl/', '_blank')">教育网</div>
+                    <div class="card" data-tooltip="社会救助、福利状况" onclick="window.open('http://www.mca.gov.cn/article/sj/', '_blank')">民政网</div>
+                    <div class="card" data-tooltip="季度、年度旅游数据" onclick="window.open('http://zwgk.mct.gov.cn/zfxxgkml/447/465/index_3081.html', '_blank')">文化和旅游网</div>
+                    <div class="card" data-tooltip="相关国家标准" onclick="window.open('http://www.samr.gov.cn/zw/sj/', '_blank')">国家市场监督管理总网</div>
+                    <div class="card" data-tooltip="年度行政复议、应诉案件数量统计" onclick="window.open('http://www.moj.gov.cn/pub/sfbgw/zwxxgk/fdzdgknr/fdzdgknrtjxx/', '_blank')">司法网</div>
+                    <div class="card" data-tooltip="产业信息网" onclick="window.open('https://www.chyxx.com/', '_blank')">产业信息网</div>
+                    <div class="card" data-tooltip="行业协会汇总" onclick="window.open('http://www.fctacc.org/yqlj.html', '_blank')">行业协会汇总</div>
+                    <div class="card" data-tooltip="房天下" onclick="window.open('https://fdc.fang.com/index/', '_blank')">房天下</div>
+                    <div class="card" data-tooltip="贝壳研究院" onclick="window.open('https://research.ke.com/', '_blank')">贝壳研究院</div>
+                    <div class="card" data-tooltip="宏观经济数据" onclick="window.open('http://www.cbnri.org/', '_blank')">第一财经研究院</div>
+                    <div class="card" data-tooltip="投资领域的市场数据" onclick="window.open('https://www.chinaventure.com.cn/report/list.html', '_blank')">投中网</div>
+                    <div class="card" data-tooltip="各种行业的投资报告" onclick="window.open('https://wk.askci.com/', '_blank')">前沿报告库</div>
+                    <div class="card" data-tooltip="中国国民食品消费" onclick="window.open('http://www.cnfia.cn/archives/category/hangyetongji', '_blank')">中国食品工业协会</div>
+                    <div class="card" data-tooltip="外卖、餐饮等生活消费" onclick="window.open('https://about.meituan.com/research/home', '_blank')">美团研究院</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="useful-links" class="column">
+            <!-- 学习类 -->
+            <div class="sub-column">
+                <h3>学习类</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="涵盖国考及各省市的真题，是备考公务员考试的考生们的重要学习平台" onclick="window.open('https://www.chinagwy.org/html/stzx/index.html', '_blank')">公务员真题网</div>
+                    <div class="card" data-tooltip="人体 3D 解剖在线学习网站" onclick="window.open('https://www.zygotebody.com/', '_blank')">Zygote Body</div>
+                    <div class="card" data-tooltip="全面英语学习网站" onclick="window.open('https://wordforest.cn', '_blank')">单词森林</div>
+                    <div class="card" data-tooltip="段落播放器，强化学习英文听力" onclick="window.open('https://www.asdpodcast.com', '_blank')">英语听力训练站</div>
+                    <div class="card" data-tooltip="Little Alchemy 2：英语单词学习，元素组合来创造出新的物品" onclick="window.open('https://littlealchemy2.com/', '_blank')">英语单词学习</div>
+                    <div class="card" data-tooltip="Forvo语言学习发音指南，目前世界上最大的发音指南" onclick="window.open('https://zh.forvo.com/', '_blank')">语言发音指南</div>
+                    <div class="card" data-tooltip="aspoem中国古诗词网站：一起来学习中国古诗词吧！" onclick="window.open('https://aspoem.com/', '_blank')">中国古诗词网站</div>
+                    <div class="card" data-tooltip="古文岛：古诗文网APP – 纯净的古诗文网站+app，支持翻译、注释、赏析、背诗" onclick="window.open('https://www.gushiwen.cn/', '_blank')">古诗文网</div>
+                    <div class="card" data-tooltip="轻量级紫微斗数排盘工具库iztro的文档以及紫微斗数相关知识科普" onclick="window.open('https://iztro.com/', '_blank')">紫微研习社</div>
+                    <div class="card" data-tooltip="免费编程学习网站" onclick="window.open('http://www.codebaoku.com/', '_blank')">编程宝库</div>
+                    <div class="card" data-tooltip="CodeCamp在线编程实战_w3cschool" onclick="window.open('https://www.w3cschool.cn/codecamp', '_blank')">w3cschool</div>
+                    <div class="card" data-tooltip="海量技术面试题库，拥有算法、数据结构、系统设计等 1000+题目，帮助你高效提升编程技能，轻松拿下世界 IT 名企 Dream Offer。" onclick="window.open('https://leetcode.cn/', '_blank')">力扣</div>
+                </div>
+            </div>
+
+            <!-- 编程类 -->
+            <div class="sub-column">
+                <h3>编程类</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="吾爱破解,破解论坛,破解软件,软件论坛,病毒分析,脱壳破解,安卓破解,加密解密,软件安全" onclick="window.open('https://www.52pojie.cn/', '_blank')">吾爱破解</div>
+                    <div class="card" data-tooltip="开发者的网上家园" onclick="window.open('https://www.cnblogs.com/', '_blank')">博客园</div>
+                    <div class="card" data-tooltip="中国最大的技术社区" onclick="window.open('https://www.csdn.net/', '_blank')">CSDN</div>
+                    <div class="card" data-tooltip="一个帮助开发者成长的社区" onclick="window.open('https://juejin.cn/', '_blank')">掘金</div>
+                    <div class="card" data-tooltip="中国领先的IT技术网站" onclick="window.open('https://www.51cto.com/', '_blank')">51CTO</div>
+                    <div class="card" data-tooltip="各类代码简单教程" onclick="window.open('https://www.runoob.com/', '_blank')">菜鸟教程</div>
+                    <div class="card" data-tooltip="通俗易懂的AI教程" onclick="window.open('https://www.captainai.net/puresmilex/', '_blank')">人工智能教程</div>
+                    <div class="card" data-tooltip="中国最大的开源代码共享社区" onclick="window.open('https://gitee.com/', '_blank')">Gitee</div>
+                    <div class="card" data-tooltip="世界最大的开源代码共享社区" onclick="window.open('https://github.com/', '_blank')">GitHub</div>
+                </div>
+            </div>
+
+            <!-- 招聘类 -->
+            <div class="sub-column">
+                <h3>招聘类</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="专业高效的求职招聘平台" onclick="window.open('https://c.liepin.com/', '_blank')">猎聘</div>
+                    <div class="card" data-tooltip="大学生一站式求职平台" onclick="window.open('https://mkt.51job.com/tg/sem/xy2022_v3.html?from=baiduad&partner=sem_pcbaiduyj_21143', '_blank')">前程无忧</div>
+                    <div class="card" data-tooltip="求职者与BOSS直接开聊" onclick="window.open('https://www.zhipin.com/', '_blank')">BOSS直聘</div>
+                    <div class="card" data-tooltip="中国领先的IT技术网站" onclick="window.open('https://landing.zhaopin.com/', '_blank')">智联招聘</div>
+                    <div class="card" data-tooltip="为高校毕业生与知名企业搭建了一座有效的桥梁" onclick="window.open('https://www.haitou.cc/', '_blank')">海投网</div>
+                    <div class="card" data-tooltip="国聘行动为全国用户服务" onclick="window.open('https://www.iguopin.com/', '_blank')">国聘</div>
+                    <div class="card" data-tooltip="互联网行业找工作就上拉勾招聘" onclick="window.open('https://www.lagou.com/', '_blank')">拉勾招聘</div>
+                    <div class="card" data-tooltip="实习僧,专注实习,校招的校园招聘平台" onclick="window.open('https://www.shixiseng.com/', '_blank')">实习僧</div>
+                </div>
+            </div>
+
+            <!-- 比赛类 -->
+            <div class="sub-column">
+                <h3>比赛类</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="中国商业统计学会" onclick="window.open('http://www.china-cssc.org/', '_blank')">中国商业统计学会</div>
+                    <div class="card" data-tooltip="全国大学生竞赛活动平台，汇聚高含金量比赛信息，提供专业报名系统和赛事服务" onclick="window.open('https://www.saikr.com/', '_blank')">赛氪</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="papers" class="column">
+            <!-- 论文查找 -->
+            <div class="sub-column">
+                <h3>论文查找</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="论文小叮当" onclick="window.open('https://panda985.com/', '_blank')">熊猫学术</div>
+                    <div class="card" data-tooltip="文献查找" onclick="window.open('https://xueshu.lanfanshu.cn/', '_blank')">烂番薯学术</div>
+                    <div class="card" data-tooltip="中国知网" onclick="window.open('https://www.cnki.net/', '_blank')">中国知网</div>
+                    <div class="card" data-tooltip="百度旗下的免费学术资源搜索平台" onclick="window.open('https://xueshu.baidu.com/', '_blank')">百度学术</div>
+                    <div class="card" data-tooltip="谷歌学术" onclick="window.open('https://xs2.zidianzhan.net/', '_blank')">深度学术搜索</div>
+                    <div class="card" data-tooltip="知网免费，国内外文献免费下载" onclick="window.open('http://www.1762.net/', '_blank')">考拉图书馆</div>
+                    <div class="card" data-tooltip="DOI查询外文文献电子书学术论文资源免费下载" onclick="window.open('https://www.sci-hub.ren/', '_blank')">Sci-Hub（一）</div>
+                    <div class="card" data-tooltip="DOI查询外文文献电子书学术论文资源免费下载" onclick="window.open('https://sci-hub.ru/', '_blank')">Sci-Hub（二）</div>
+                    <div class="card" data-tooltip="DOI查询外文文献电子书学术论文资源免费下载" onclick="window.open('https://sci-hub.se/', '_blank')">Sci-Hub（三）</div>
+                    <div class="card" data-tooltip="DOI查询外文文献电子书学术论文资源免费下载" onclick="window.open('https://sci-hub.st/', '_blank')">Sci-Hub（四）</div>
+                    <div class="card" data-tooltip="英文文献查找" onclick="window.open('https://www.ncbi.nlm.nih.gov/pubmed/', '_blank')">Pubmed</div>
+                    <div class="card" data-tooltip="期刊查找" onclick="window.open('https://www.oalib.com/', '_blank')">OALib</div>
+                    <div class="card" data-tooltip="国外期刊电子书查找" onclick="window.open('https://libgen.gs/', '_blank')">Libgen</div>
+                </div>
+            </div>
+
+            <!-- 论文翻译 -->
+            <div class="sub-column">
+                <h3>论文翻译</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="AI聚合翻译" onclick="window.open('https://lyrify.sipc.ink/', '_blank')">AI聚合翻译</div>
+                    <div class="card" data-tooltip="Google翻译" onclick="window.open('https://translate.google.cn/', '_blank')">Google翻译</div>
+                    <div class="card" data-tooltip="有道翻译" onclick="window.open('https://fanyi.youdao.com/index.html', '_blank')">有道翻译</div>
+                    <div class="card" data-tooltip="Deepl翻译" onclick="window.open('https://www.deepl.com/', '_blank')">Deepl翻译</div>
+                    <div class="card" data-tooltip="百度翻译" onclick="window.open('https://fanyi.baidu.com/', '_blank')">百度翻译</div>
+                    <div class="card" data-tooltip="搜狗翻译" onclick="window.open('https://fanyi.sogou.com/', '_blank')">搜狗翻译</div>
+                    <div class="card" data-tooltip="必应翻译" onclick="window.open('https://cn.bing.com/translator?h_text=msn_ctxt&setlang=zh-cn', '_blank')">必应翻译</div>
+                    <div class="card" data-tooltip="大木虫翻译" onclick="window.open('http://www.5628.org/', '_blank')">大木虫翻译</div>
+                    <div class="card" data-tooltip="彩云小译" onclick="window.open('https://fanyi.caiyunapp.com/', '_blank')">彩云小译</div>
+                </div>
+            </div>
+
+            <!-- 论文查重 -->
+            <div class="sub-column">
+                <h3>论文查重</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="每天免费一次，中午有限免" onclick="window.open('https://www.paperyy.com/', '_blank')">paperyy</div>
+                    <div class="card" data-tooltip="每天免费一次" onclick="window.open('https://check.lunwengo.net/', '_blank')">论文狗</div>
+                    <div class="card" data-tooltip="专业版：全天免费查重；旗舰版：每日早8点" onclick="window.open('https://www.paperred.com/', '_blank')">paperred</div>
+                    <div class="card" data-tooltip="免费,数据库少" onclick="window.open('https://www.paperpm.com/', '_blank')">paperpm</div>
+                    <div class="card" data-tooltip="每天免费1篇" onclick="window.open('https://www.paperlike.net/', '_blank')">paperlike</div>
+                    <div class="card" data-tooltip="每天签到做题送字数" onclick="window.open('https://simidetect.jianguoyun.net.cn/?promotion_source=zh265279294', '_blank')">坚果云查重</div>
+                    <div class="card" data-tooltip="免费1w字，可做任务叠加" onclick="window.open('https://www.paperpass.com/', '_blank')">paperpass</div>
+                    <div class="card" data-tooltip="免费1w字，可做任务叠加" onclick="window.open('https://www.paperfree.cn/', '_blank')">paperfree</div>
+                    <div class="card" data-tooltip="80/篇" onclick="window.open('https://ywj.checkcms.com/bd/index.html', '_blank')">源文鉴本科</div>
+                    <div class="card" data-tooltip="258/篇" onclick="window.open('https://ywj.checkcms.com/bd/index.html', '_blank')">源文鉴硕博</div>
+                    <div class="card" data-tooltip="3/千字" onclick="window.open('https://jc.wanfangdata.com.cn/#/newPapers', '_blank')">万方本科检测</div>
+                    <div class="card" data-tooltip="3/千字" onclick="window.open('https://www.cnweipu.com/', '_blank')">维普本科研究生检测</div>
+                    <div class="card" data-tooltip="1.5/千字" onclick="window.open('https://cx.cnki.net/main.html#/login', '_blank')">知网个人检测</div>
+                    <div class="card" data-tooltip="毕业生免费一次" onclick="window.open('https://www.chsi.com.cn/', '_blank')">学信网</div>
+                    <div class="card" data-tooltip="免费查重5次，第一次查重报告免费" onclick="window.open('http://campus.lib.chaoxing.com/', '_blank')">超星校园通</div>
+                </div>
+            </div>
+
+            <!-- 论文降重 -->
+            <div class="sub-column">
+                <h3>论文降重</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="每天免费8000字改写+多种付费降重" onclick="window.open('https://xiezuocat.com/', '_blank')">秘塔写作猫</div>
+                    <div class="card" data-tooltip="免费无限制" onclick="window.open('http://www.6338.org/', '_blank')">天临助手</div>
+                    <div class="card" data-tooltip="每天免费3000字" onclick="window.open('https://www.beiying.net/', '_blank')">贝影助手</div>
+                    <div class="card" data-tooltip="免费降重宝盒" onclick="window.open('https://www.paperpass.com/', '_blank')">paperpass</div>
+                    <div class="card" data-tooltip="每天免费1000字" onclick="window.open('http://www.papereasy.com/', '_blank')">papereasy</div>
+                    <div class="card" data-tooltip="部分免费有限制" onclick="window.open('https://www.paperfree.cn/', '_blank')">paperfree</div>
+                    <div class="card" data-tooltip="2元/千字" onclick="window.open('https://mooc-lwgx.checkpass.net/', '_blank')">论文改写</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="entertainment-section" class="column">
+            <!-- 热搜热点 -->
+            <div class="sub-column">
+                <h3>热搜热点</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="微博热搜" onclick="window.open('https://tophub.today/n/KqndgxeLl9', '_blank')">微博热搜</div>
+                    <div class="card" data-tooltip="百度热搜" onclick="window.open('https://top.baidu.com/board', '_blank')">百度热搜</div>
+                    <div class="card" data-tooltip="澎湃热搜" onclick="window.open('https://m.thepaper.cn/htmlstatic', '_blank')">澎湃热搜</div>
+                    <div class="card" data-tooltip="知乎热搜" onclick="window.open('https://tophub.today/n/mproPpoq6O', '_blank')">知乎热搜</div>
+                    <div class="card" data-tooltip="微信热搜" onclick="window.open('https://tophub.today/n/WnBe01o371', '_blank')">微信热搜</div>
+                    <div class="card" data-tooltip="B站热搜" onclick="window.open('https://tophub.today/n/74KvxwokxM', '_blank')">B站热搜</div>
+                    <div class="card" data-tooltip="抖音热搜" onclick="window.open('https://tophub.today/n/DpQvNABoNE', '_blank')">抖音热搜</div>
+                    <div class="card" data-tooltip="天涯神贴" onclick="window.open('https://tianya.at/bbs/?s=reload', '_blank')">天涯神贴</div>
+                </div>
+            </div>
+        
+            <!-- 在线影视 -->
+            <div class="sub-column">
+                <h3>在线影视</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="腾讯视频" onclick="window.open('https://v.qq.com/', '_blank')">腾讯视频</div>
+                    <div class="card" data-tooltip="爱奇艺" onclick="window.open('https://www.iqiyi.com/', '_blank')">爱奇艺</div>
+                    <div class="card" data-tooltip="优酷" onclick="window.open('https://www.youku.com/', '_blank')">优酷</div>
+                    <div class="card" data-tooltip="芒果TV" onclick="window.open('https://www.mgtv.com/', '_blank')">芒果TV</div>
+                    <div class="card" data-tooltip="B站" onclick="window.open('https://www.bilibili.com/', '_blank')">B站</div>
+                    <div class="card" data-tooltip="抖音" onclick="window.open('https://www.douyin.com/', '_blank')">抖音</div>
+                    <div class="card" data-tooltip="快手" onclick="window.open('https://www.kuaishou.com/new-reco', '_blank')">快手</div>
+                    <div class="card" data-tooltip="Youtube(镜像)" onclick="window.open('https://ggg.add.pub/-----https://www.youtube.com/', '_blank')">Youtube(镜像)</div>
+                    <div class="card" data-tooltip="在线直播" onclick="window.open('http://zqjy.info/tv/NzM3NzA3?channel=CCTV-11', '_blank')">在线直播</div>
+                    <div class="card" data-tooltip="纪录片之家" onclick="window.open('https://www.05jl.com/', '_blank')">纪录片之家</div>
+                    <div class="card" data-tooltip="人人电影网" onclick="window.open('https://www.rrdynb.com/index.html', '_blank')">人人电影网</div>
+                    <div class="card" data-tooltip="羽路均沾" onclick="window.open('http://ylu.cc/', '_blank')">羽路均沾</div>
+                    <div class="card" data-tooltip="奈飞工厂" onclick="window.open('https://www.netflixgc.com/', '_blank')">奈飞工厂</div>
+                    <div class="card" data-tooltip="看美剧" onclick="window.open('https://www.kanmeiju.org/', '_blank')">看美剧</div>
+                    <div class="card" data-tooltip="海纳TV" onclick="window.open('http://www.hainatv.net', '_blank')">海纳TV</div>
+                    <div class="card" data-tooltip="FreeOK" onclick="window.open('http://www.freeokk.pro', '_blank')">FreeOK</div>
+                    <div class="card" data-tooltip="剧圈圈" onclick="window.open('https://link3.cc/jqqzx', '_blank')">剧圈圈</div>
+                    <div class="card" data-tooltip="电影港" onclick="window.open('https://www.dygang.cc/', '_blank')">电影港</div>
+                    <div class="card" data-tooltip="韩剧看看" onclick="window.open('https://www.hanjukankan.com/', '_blank')">韩剧看看</div>
+                    <div class="card" data-tooltip="GoFilm" onclick="window.open('https://m.mubai.link/index', '_blank')">GoFilm</div>
+                    <div class="card" data-tooltip="蜜糖动漫" onclick="window.open('https://www.mitang.tv/', '_blank')">蜜糖动漫</div>
+                </div>
+            </div>
+        
+            <!-- 在线音乐 -->
+            <div class="sub-column">
+                <h3>在线音乐</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="网易云音乐" onclick="window.open('https://music.163.com/', '_blank')">网易云音乐</div>
+                    <div class="card" data-tooltip="qq音乐" onclick="window.open('https://y.qq.com/', '_blank')">qq音乐</div>
+                    <div class="card" data-tooltip="猫耳FM" onclick="window.open('https://www.missevan.com/', '_blank')">猫耳FM</div>
+                    <div class="card" data-tooltip="MyFreeMP3" onclick="window.open('https://tools.liumingye.cn/music/', '_blank')">MyFreeMP3</div>
+                    <div class="card" data-tooltip="下歌吧" onclick="window.open('https://music.y444.cn/', '_blank')">下歌吧</div>
+                    <div class="card" data-tooltip="HIFINI音乐磁场" onclick="window.open('https://www.hifini.com/thread-103510.htm', '_blank')">HIFINI音乐磁场</div>
+                </div>
+            </div>
+        
+            <!-- 在线阅读 -->
+            <div class="sub-column">
+                <h3>在线阅读</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="找书神器" onclick="window.open('https://mianfei22.com/', '_blank')">找书神器</div>
+                    <div class="card" data-tooltip="小鱼速读" onclick="window.open('http://www.xysudu.com/', '_blank')">小鱼速读</div>
+                    <div class="card" data-tooltip="书趣阁" onclick="window.open('https://www.ishuquge.org/', '_blank')">书趣阁</div>
+                    <div class="card" data-tooltip="香书小说" onclick="window.open('https://wap.ibiquge.la/', '_blank')">香书小说</div>
+                    <div class="card" data-tooltip="亿软网" onclick="window.open('https://www.yiruan.la/', '_blank')">亿软网</div>
+                    <div class="card" data-tooltip="鸟书网" onclick="window.open('https://www.99mk.info/', '_blank')">鸟书网</div>
+                    <div class="card" data-tooltip="笔书网" onclick="window.open('https://www.biqukun.info/', '_blank')">笔书网</div>
+                    <div class="card" data-tooltip="渣渣小说" onclick="window.open('https://www.zztxt.net/', '_blank')">渣渣小说</div>
+                    <div class="card" data-tooltip="潇湘书院" onclick="window.open('https://www.xxsy.net/', '_blank')">潇湘书院</div>
+                    <div class="card" data-tooltip="聚合阅读" onclick="window.open('https://xr.unionread.net/', '_blank')">聚合阅读</div>
+                    <div class="card" data-tooltip="小说搜索" onclick="window.open('https://www.xssousou.com/', '_blank')">小说搜索</div>
+                </div>
+            </div>
+        
+            <!-- 在线漫画 -->
+            <div class="sub-column">
+                <h3>在线漫画</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="蜜柑计划：新一代的动漫下载站" onclick="window.open('https://mikanani.me', '_blank')">蜜柑计划</div>
+                    <div class="card" data-tooltip="原布丁动画,布丁动漫官网" onclick="window.open('https://buding3.com/', '_blank')">布丁动漫</div>
+                    <div class="card" data-tooltip="免费在线看，更新超快" onclick="window.open('https://baozimh.org/', '_blank')">包子漫画</div>
+                    <div class="card" data-tooltip="免费在线看，更新超快" onclick="window.open('http://www.qiximh2.com/', '_blank')">七夕漫画</div>
+                    <div class="card" data-tooltip="免费在线看，更新超快" onclick="window.open('http://www.kumw7.com/', '_blank')">酷漫屋</div>
+                    <div class="card" data-tooltip="免费在线看，更新超快" onclick="window.open('http://www.qiman59.com/', '_blank')">奇漫屋</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tools-section" class="column">
+            <!-- 常用工具 -->
+            <div class="sub-column">
+                <h3>常用工具</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="在线工具合集" onclick="window.open('https://www.dirs.cn', '_blank')">在线工具合集</div>
+                    <div class="card" data-tooltip="在线翻译" onclick="window.open('https://lyrify.sipc.ink', '_blank')">在线翻译</div>
+                    <div class="card" data-tooltip="在线logo设计" onclick="window.open('https://www.uugai.com/', '_blank')">在线logo设计</div>
+                    <div class="card" data-tooltip="在线思维导图" onclick="window.open('https://zhimap.com/home', '_blank')">在线思维导图</div>
+                    <div class="card" data-tooltip="简历在线制作" onclick="window.open('https://lyly.top', '_blank')">简历在线制作</div>
+                    <div class="card" data-tooltip="epub阅读器" onclick="window.open('https://evoreader.github.io/', '_blank')">epub阅读器</div>
+                    <div class="card" data-tooltip="法律文库" onclick="window.open('https://www.justlaws.cn/', '_blank')">法律文库</div>
+                    <div class="card" data-tooltip="表格格式转换" onclick="window.open('https://tableconvert.com/', '_blank')">表格格式转换</div>
+                    <div class="card" data-tooltip="文件传输" onclick="window.open('https://woc.space/', '_blank')">文件传输</div>
+                    <div class="card" data-tooltip="PDF、CAJ格式免费文档转换" onclick="window.open('https://app.xunjiepdf.com/', '_blank')">迅捷pdf转换</div>
+                    <div class="card" data-tooltip="无限次使用，永久免费" onclick="window.open('https://www.pdfpai.com/', '_blank')">PDF转换</div>
+                    <div class="card" data-tooltip="简单提取相关文献，操作可百度" onclick="window.open('https://www.paperdigest.org/', '_blank')">文献综述在线生成</div>
+                    <div class="card" data-tooltip="快速得到LaTex源码与word公式" onclick="window.open('https://www.paperdigest.org/', '_blank')">图片公式识别</div>
+                    <div class="card" data-tooltip="在线修剪或剪切任何音频文件" onclick="window.open('https://mp3cut.net/cn/', '_blank')">Audio Cutter</div>
+                    <div class="card" data-tooltip="下载文献如此简单" onclick="window.open('https://wwx.lanzoui.com/i4u2Qselgva', '_blank')">文献神器</div>
+                    <div class="card" data-tooltip="免费文献翻译神器" onclick="window.open('https://www.zhiyunwenxian.cn/', '_blank')">知云文献翻译</div>
+                    <div class="card" data-tooltip="立即找到类似的网站" onclick="window.open('https://www.similarsites.com/', '_blank')">查找相同类型网站</div>
+                    <div class="card" data-tooltip="开启一次未知之旅，这里总有一个属于你的宝站！" onclick="window.open('https://gate.ofo.moe/', '_blank')">任意门</div>
+                </div>
+            </div>
+        
+            <!-- 国产AI -->
+            <div class="sub-column">
+                <h3>国产AI</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="AI PPT" onclick="window.open('https://www.aippt.cn/', '_blank')">AI PPT</div>
+                    <div class="card" data-tooltip="天工AI" onclick="window.open('https://www.tiangong.cn/', '_blank')">天工AI</div>
+                    <div class="card" data-tooltip="海螺AI" onclick="window.open('https://hailuoai.com/', '_blank')">海螺AI</div>
+                    <div class="card" data-tooltip="Kimi Chat" onclick="window.open('https://kimi.moonshot.cn/', '_blank')">Kimi Chat</div>
+                    <div class="card" data-tooltip="讯飞AI工具" onclick="window.open('https://xinghuo.xfyun.cn/', '_blank')">讯飞星火</div>
+                    <div class="card" data-tooltip="清华AI工具" onclick="window.open('https://www.chatglm.cn', '_blank')">智谱清言</div>
+                    <div class="card" data-tooltip="阿里AI工具" onclick="window.open('https://tongyi.aliyun.com/qianwen/', '_blank')">通义千文</div>
+                    <div class="card" data-tooltip="抖音AI工具" onclick="window.open('https://www.doubao.com/', '_blank')">豆包AI</div>
+                    <div class="card" data-tooltip="百度AI工具" onclick="window.open('https://yiyan.baidu.com/', '_blank')">文心一言</div>
+                    <div class="card" data-tooltip="上海人工智能实验室开源大模型" onclick="window.open('https://intern-ai.org.cn/home', '_blank')">书生AI</div>
+                    <div class="card" data-tooltip="阿水AI，全能的AI，拥有无限可能！" onclick="window.open('https://ai.rcouyi.com', '_blank')">欧亿AI</div>
+                    <div class="card" data-tooltip="知乎AI工具" onclick="window.open('https://zhida.zhihu.com/', '_blank')">知乎AI</div>
+                    <div class="card" data-tooltip="腾讯AI工具" onclick="window.open('https://yuanqi.tencent.com/', '_blank')">腾讯AI</div>
+                    <div class="card" data-tooltip="360AI工具" onclick="window.open('https://chat.360.com/', '_blank')">360AI</div>
+                    <div class="card" data-tooltip="CCF联合北京百川智能科技有限公司共同创立的AI工具" onclick="window.open('https://www.baichuan-ai.com/', '_blank')">百川AI</div>
+                    <div class="card" data-tooltip="中国科学院自动化研究所和武汉人工智能研究院推出新一代多模态大模型" onclick="window.open('https://taichu-web.ia.ac.cn/', '_blank')">紫东太初</div>
+                    <div class="card" data-tooltip="图片视频创意生产力平台" onclick="window.open('https://klingai.kuaishou.com/', '_blank')">可灵AI</div>
+                    <div class="card" data-tooltip="小浣熊AI" onclick="window.open('https://raccoon.sensetime.com/', '_blank')">小浣熊AI</div>
+                    <div class="card" data-tooltip="百度综合性AI原生应用" onclick="window.open('https://cp.baidu.com/', '_blank')">橙篇AI</div>
+                    <div class="card" data-tooltip="智能工具ModelScopeGPT（魔搭GPT），它能接收用户指令，通过“中枢模型”一键调用魔搭社区其他的AI模型，大小模型协同完成复杂任务。" onclick="window.open('https://www.modelscope.cn/studios/iic/ModelScopeGPT/summary', '_blank')">魔搭GPT</div>
+                    <div class="card" data-tooltip="字节跳动AI工具" onclick="window.open('https://wukong.com/tool', '_blank')">小悟空</div>
+                    <div class="card" data-tooltip="澜舟科技研发的一款功能强大的生成式可控大语言模型" onclick="window.open('https://www.langboat.com/portal/mengzi-gpt', '_blank')">孟子 GPT</div>
+                    <div class="card" data-tooltip="商量科技人工智能助手" onclick="window.open('https://chat.sensetime.com/wb/chat', '_blank')">商量AI</div>
+                    <div class="card" data-tooltip="云知声医学人工智能助手" onclick="window.open('https://shanhai.unisound.com/chat', '_blank')">山海AI</div>
+                    <div class="card" data-tooltip="阿帕斯智能对话+医学人工智能助手" onclick="window.open('https://shanhai.unisound.com/chat', '_blank')">阿帕斯AI</div>
+                    <div class="card" data-tooltip="深思考人工智能助手" onclick="window.open('https://www.dongni.ai/', '_blank')">懂你AI</div>
+                    <div class="card" data-tooltip="CSDN AI" onclick="window.open('https://so.csdn.net/chat', '_blank')">CSDN AI</div>
+                    <div class="card" data-tooltip="百度智能写作AI" onclick="window.open('https://zuojia.baidu.com/', '_blank')">百度作家平台</div>
+                    <div class="card" data-tooltip="字节跳动智能写作AI" onclick="window.open('https://writingo.net/document', '_blank')">火山写作</div>
+                    <div class="card" data-tooltip="秘塔写作AI" onclick="window.open('https://xiezuocat.com/', '_blank')">AI写作猫</div>
+                    <div class="card" data-tooltip="讯飞智能写作AI" onclick="window.open('https://gw.iflydocs.com/', '_blank')">讯飞写作</div>
+                </div>
+            </div>
+        
+            <!-- 国外AI -->
+            <div class="sub-column">
+                <h3>国外AI</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="微软AI" onclick="window.open('https://copilot.microsoft.com/', '_blank')">Copilot</div>
+                    <div class="card" data-tooltip="openAI" onclick="window.open('https://openai.com/chatgpt/', '_blank')">chatgpt</div>
+                    <div class="card" data-tooltip="Google AI" onclick="window.open('https://blog.google/technology/ai/try-bard/', '_blank')">Google Bard</div>
+                    <div class="card" data-tooltip="创建虚拟角色对话" onclick="window.open('https://www.ai-character.ai/', '_blank')">Character.AI</div>
+                    <div class="card" data-tooltip="使用 DeepL Write 梦笔生花" onclick="window.open('https://www.deepl.com/zh/write', '_blank')">DeepL Write</div>
+                    <div class="card" data-tooltip="AI英语语法和拼写检查" onclick="window.open('https://www.grammarly.com/', '_blank')">grammarly</div>
+                    <div class="card" data-tooltip="留学生专属的写作AI" onclick="window.open('https://writingpal.ai/', '_blank')">WritingPal</div>
+                    <div class="card" data-tooltip="AI英德写作润色" onclick="window.open('https://quillbot.com/', '_blank')">QuillBot</div>
+                    <div class="card" data-tooltip="免费AI总结翻译神器，文档翻译+阅读+改写+OCR" onclick="window.open('https://baoyueai.com/', '_blank')">AI阅读专家</div>
+                    <div class="card" data-tooltip="故事生成器" onclick="window.open('https://www.dreampress.ai/', '_blank')">故事生成器</div>
+                    <div class="card" data-tooltip="AI生成问卷" onclick="window.open('https://wj.qq.com/ai/generate.html', '_blank')">AI生成问卷</div>
+                    <div class="card" data-tooltip="AI图片解读" onclick="window.open('https://describepicture.org/', '_blank')">AI图片解读</div>
+                    <div class="card" data-tooltip="AI生成问卷" onclick="window.open('https://ai-math.top/teacher', '_blank')">AI数学题解答</div>
+                    <div class="card" data-tooltip="AI搜索引擎" onclick="window.open('https://search.lepton.run/', '_blank')">AI搜索引擎</div>
+                </div>
+            </div>
+        
+            <!-- 常用插件 -->
+            <div class="sub-column">
+                <h3>常用插件</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="一款免费的支持Word、Excel、PPT、WPS三件套的全能Office插件，大大提高办公效率。" onclick="window.open('https://www.bukenghezi.com/', '_blank')">不坑盒子</div>
+                </div>
+            </div>
+        
+            <!-- 其他工具 -->
+            <div class="sub-column">
+                <h3>其他工具</h3>
+                <div class="card-container">
+                    <div class="card" data-tooltip="更多内容正在开发中">更新ing...</div>
+                </div>
+            </div>
+        </div>        
+        
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+        const toggleButton = document.getElementById('toggle-sidebar');
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const columnLinks = document.querySelectorAll('#sidebar a, .nav-link');
+        const columns = document.querySelectorAll('.column');
+        const searchTabs = document.querySelectorAll('#search-tabs button');
+        const announcement = document.getElementById('announcement'); // 获取公告弹窗元素
+        const contact_author = document.getElementById('contact-author-modal'); // 获取公告弹窗元素contact-author-modal
+        let activeEngine = searchTabs[0].dataset.engine;
+
+        // 侧边栏和内容区域的切换
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden');
+            content.classList.toggle('shifted');
+            const icon = toggleButton.querySelector('i');
+            if (sidebar.classList.contains('hidden')) {
+                icon.classList.remove('fa-angle-left');
+                icon.classList.add('fa-angle-right');
+            } else {
+                icon.classList.remove('fa-angle-right');
+                icon.classList.add('fa-angle-left');
+            }
+        });
+
+        // 专栏切换逻辑
+        // 专栏切换逻辑
+        columnLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault(); // 阻止默认链接跳转行为
+
+                const target = link.dataset.target;
+
+                // 移除所有专栏的 `active` 类
+                columns.forEach(col => col.classList.remove('active'));
+
+                // 添加目标专栏的 `active` 类
+                document.getElementById(target).classList.add('active');
+
+                // 移除所有侧边栏链接的 `active` 类
+                columnLinks.forEach(link => link.classList.remove('active'));
+
+                // 为当前点击的链接添加 `active` 类
+                link.classList.add('active');
+            });
+        });
+
+        // 初始化：设置默认激活的专栏和侧边栏链接
+        document.getElementById('personal').classList.add('active'); // 默认显示的专栏
+        document.querySelector('#sidebar a[data-target="personal"]').classList.add('active'); // 默认激活的侧边栏链接
+        document.querySelector('.nav-link[data-target="personal"]').classList.add('active'); // 默认激活的侧边栏链接
+
+
+        //  公告弹窗逻辑
+         // 显示公告弹窗
+        setTimeout(() => {
+            announcement.style.display = 'block';
+        }, 1000); // 1秒后显示公告
+
+        // 5秒后自动关闭公告
+        setTimeout(() => {
+            announcement.style.display = 'none';
+        }, 5000); // 6秒后关闭公告
+
+        // 手动关闭公告
+        function closeAnnouncement() {
+            announcement.style.display = 'none';
+        }
+
+        // 手动关闭公告
+        function close_contact_author() {
+            contact_author.style.display = 'none';
+        }
+        
+
+        // 搜索框 Tab 切换逻辑
+        searchTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                searchTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                activeEngine = tab.dataset.engine;
+                searchInput.placeholder = tab.dataset.placeholder; // 更新placeholder
+            });
+        });
+
+        // 搜索按钮点击事件,修复：使用 activeEngine 变量
+        searchButton.addEventListener('click', () => {
+            const query = searchInput.value;
+             window.open(activeEngine + encodeURIComponent(query), '_blank');
+        });
+
+        // 将search-tabs移动到search-bar上方
+        const searchBar = document.getElementById('search-bar');
+        const searchTabsContainer = document.getElementById('search-tabs');
+        searchBar.parentNode.insertBefore(searchTabsContainer, searchBar);
+        
+        
+
+        // 一键到顶功能
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onload = scrollToTop; //  页面加载时滚动到顶部
+
+        // 一键置顶按钮的显示/隐藏逻辑
+        window.addEventListener('scroll', () => {
+            const scrollTopButton = document.getElementById('scroll-to-top');
+            if (window.scrollY > 50) {
+                scrollTopButton.style.display = 'flex';
+            } else {
+                scrollTopButton.style.display = 'none';
+            }
+        });
+
+        // 联系作者弹窗
+        const contactModal = document.getElementById("contact-author-modal");
+        const openContactModalBtn = document.getElementById("open-contact-modal");
+        const closeContactModalBtn = document.getElementById("close-contact-modal");
+
+        openContactModalBtn.addEventListener('click', () => {
+            contactModal.style.display = "block";
+        });
+
+        closeContactModalBtn.addEventListener('click', () => {
+            contactModal.style.display = "none";
+        });
+    </script>
+    <script>
+        // 立即执行函数，创建独立作用域
+        (function () {
+            // 获取当前日期
+            const currentDate = new Date();
+            // 获取当前年份
+            const currentYear = currentDate.getFullYear();
+            // 定义考研日期所在的月份（11表示12月，因为JavaScript中月份从0开始计数）
+            const examMonths = {
+                kaoyan: 11,
+                kaogong: 11
+            };
+            // 定义考研和考公在对应月份中的日期
+            const examDays = {
+                kaoyan: 22,
+                kaogong: 1
+            };
+
+            // 根据给定的年份、月份、日期创建Date对象的函数
+            function createDate(year, month, day) {
+                return new Date(year, month, day);
+            }
+
+            // 格式化日期的函数，将Date对象格式化为'YYYY-MM-DD'的字符串形式
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = ('0' + (date.getMonth() + 1)).slice(-2);
+                const day = ('0' + date.getDate()).slice(-2);
+                return `${year}-${month}-${day}`;
+            }
+
+            // 获取下一年考试日期的函数，传入考试类型（如'kaoyan'或'kaogong'）
+            function getNextExamDate(examType) {
+                // 如果当前日期已经超过了当年的考试日期，就使用下一年的年份来创建考试日期对象
+                const year = currentDate > createDate(currentYear, examMonths[examType], examDays[examType])? currentYear + 1 : currentYear;
+                return createDate(year, examMonths[examType], examDays[examType]);
+            }
+
+            // 每隔1秒执行一次的定时器函数
+            setInterval(() => {
+                // 获取当前日期时间
+                const presentDate = new Date();
+
+                // 获取下一年考研日期
+                const kyDate = getNextExamDate('kaoyan');
+                // 获取下一年考公日期
+                const kgDate = getNextExamDate('kaogong');
+
+                // 计算距离考研日期的时间差（单位为毫秒）
+                const kyTime = kyDate - presentDate;
+                // 计算距离考公日期的时间差（单位为毫秒）
+                const kgTime = kgDate - presentDate;
+
+                // 将时间差转换为天数（向上取整）
+                const kyDays = Math.ceil(kyTime / (1000 * 60 * 60 * 24));
+                const kgDays = Math.ceil(kgTime / (1000 * 60 * 60 * 24));
+
+                // 获取页面中id为'kaoyan'的元素，并设置其文本内容为距离考研的天数
+                const kyElement = document.getElementById('kaoyan');
+                if (kyElement) {
+                    kyElement.textContent = kyDays;
+                }
+
+                // 获取页面中id为'kaogong'的元素，并设置其文本内容为距离考公的天数
+                const kgElement = document.getElementById('kaogong');
+                if (kgElement) {
+                    kgElement.textContent = kgDays;
+                }
+            }, 1000);
+        })();
+
+    </script>
+</body>
+</html>
